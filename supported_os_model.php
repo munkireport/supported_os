@@ -37,7 +37,7 @@ class Supported_os_model extends \Model
         $parser->parse($data);     
         $plist = $parser->toArray();
         
-        $most_current_os = "10.14.1"; // Update this as Apple releases new point updates
+        $most_current_os = "10.14.2"; // Update this as Apple releases new point updates
         
         if (strpos($plist['machine_id'], 'iMacPro') !== false) {
             $model_num = preg_replace("/[^0-9]/", "", $plist['machine_id']);
@@ -83,7 +83,7 @@ class Supported_os_model extends \Model
             $model_num = preg_replace("/[^0-9]/", "", $plist['machine_id']);
             if ($model_num >= 91) {
                 $plist['highest_supported'] = $most_current_os;
-            } else if ($model_num >= 71) {
+            } else if ($model_num >= 61) {
                 $plist['highest_supported'] = "10.13.6";
             } else if ($model_num >= 31) {
                 $plist['highest_supported'] = "10.11.6";
