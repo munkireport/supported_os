@@ -37,17 +37,18 @@ class Supported_os_model extends \Model
         $parser->parse($data);     
         $plist = $parser->toArray();
         
-        $most_current_os = "10.14.5"; // Update this as Apple releases new point updates
+        $most_current_os = "10.14.5"; // Update this as Apple releases new point updates.
+        $macos_catalina = "10.15.0"; // This line to be removed when 10.15 officially ships and the above line is updated. References to this variable below will need to be updated as well.
         
         if (strpos($plist['machine_id'], 'iMacPro') !== false) {
             $model_num = preg_replace("/[^0-9]/", "", $plist['machine_id']);
             if ($model_num >= 11) {
-                $plist['highest_supported'] = $most_current_os;
+                $plist['highest_supported'] = $macos_catalina;
             }
         } else if (strpos($plist['machine_id'], 'iMac') !== false) {
             $model_num = preg_replace("/[^0-9]/", "", $plist['machine_id']);
             if ($model_num >= 131) {
-                $plist['highest_supported'] = $most_current_os;
+                $plist['highest_supported'] = $macos_catalina;
             } else if ($model_num >= 101) {
                 $plist['highest_supported'] = "10.13.6";
             } else if ($model_num >= 71) {
@@ -60,7 +61,7 @@ class Supported_os_model extends \Model
         } else if (strpos($plist['machine_id'], 'Macmini') !== false) {
             $model_num = preg_replace("/[^0-9]/", "", $plist['machine_id']);
             if ($model_num >= 61) {
-                $plist['highest_supported'] = $most_current_os;
+                $plist['highest_supported'] = $macos_catalina;
             } else if ($model_num >= 41) {
                 $plist['highest_supported'] = "10.13.6";
             } else if ($model_num >= 31) {
@@ -72,7 +73,9 @@ class Supported_os_model extends \Model
             }
         } else if (strpos($plist['machine_id'], 'MacPro') !== false) {
             $model_num = preg_replace("/[^0-9]/", "", $plist['machine_id']);
-            if ($model_num >= 51) {
+            if ($model_num >= 61) {
+                $plist['highest_supported'] = $macos_catalina;
+            } else if ($model_num >= 51) {
                 $plist['highest_supported'] = $most_current_os;
             } else if ($model_num >= 31) {
                 $plist['highest_supported'] = "10.11.6";
@@ -82,7 +85,7 @@ class Supported_os_model extends \Model
         } else if (strpos($plist['machine_id'], 'MacBookPro') !== false) {
             $model_num = preg_replace("/[^0-9]/", "", $plist['machine_id']);
             if ($model_num >= 91) {
-                $plist['highest_supported'] = $most_current_os;
+                $plist['highest_supported'] = $macos_catalina;
             } else if ($model_num >= 61) {
                 $plist['highest_supported'] = "10.13.6";
             } else if ($model_num >= 31) {
@@ -95,7 +98,7 @@ class Supported_os_model extends \Model
         } else if (strpos($plist['machine_id'], 'MacBookAir') !== false) {
             $model_num = preg_replace("/[^0-9]/", "", $plist['machine_id']);
             if ($model_num >= 51) {
-                $plist['highest_supported'] = $most_current_os;
+                $plist['highest_supported'] = $macos_catalina;
             } else if ($model_num >= 31) {
                 $plist['highest_supported'] = "10.13.6";
             } else if ($model_num >= 21) {
@@ -106,7 +109,7 @@ class Supported_os_model extends \Model
         } else if (strpos($plist['machine_id'], 'MacBook') !== false) {
             $model_num = preg_replace("/[^0-9]/", "", $plist['machine_id']);
             if ($model_num >= 81) {
-                $plist['highest_supported'] = $most_current_os;
+                $plist['highest_supported'] = $macos_catalina;
             } else if ($model_num >= 61) {
                 $plist['highest_supported'] = "10.13.6";
             } else if ($model_num >= 51) {
