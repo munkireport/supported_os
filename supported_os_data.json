@@ -49,5 +49,5 @@
       "11": "10.6.8"
     }
   },
-  "ReadMe": "JSON file used by MunkiReport's supported_os module to determine current OS and maximum supported OS versions"
+  "ReadMe": "JSON file used by MunkiReports supported_os module to determine current OS and maximum supported OS versions"
 }
