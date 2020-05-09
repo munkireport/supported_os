@@ -12,7 +12,6 @@ class SupportedOsCache extends Migration
         $capsule = new Capsule();
         $capsule::schema()->table($this->tableName, function (Blueprint $table) {
             $table->integer('shipping_os')->nullable();
-            $table->text('model_support_cache')->nullable();
             
             $table->index('shipping_os');
         });
@@ -22,7 +21,6 @@ class SupportedOsCache extends Migration
     {
         $capsule = new Capsule();
         $capsule::schema()->table($this->tableName, function (Blueprint $table) {
-            $table->dropColumn('model_support_cache');
             $table->dropColumn('shipping_os');
         });
     }

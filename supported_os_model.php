@@ -14,7 +14,6 @@ class Supported_os_model extends \Model
         $this->rs['machine_id'] = null;
         $this->rs['last_touch'] = 0;
         $this->rs['shipping_os'] = null;
-        $this->rs['model_support_cache'] = null;
 
         if ($serial) {
             $this->retrieve_record($serial);
@@ -38,39 +37,37 @@ class Supported_os_model extends \Model
             throw new Exception("Error Processing Request: No property list found", 1);
         }
 
-        // Check if we have cached supported OS JSONs
-        $queryobj = new Supported_os_model();
-        $sql = "SELECT last_touch FROM `supported_os` WHERE serial_number = 'JSON_CACHE_DATA'";
-        $cached_data_time = $queryobj->query($sql);
+        // Check if we have cached supported OS YAML
+        $cached_data_time = munkireport\models\Cache::select('value')
+                        ->where('module', 'supported_os')
+                        ->where('property', 'last_update')
+                        ->value('value');
 
         // Get the current time
         $current_time = time();
 
         // Check if we have a null result or a week has passed
-        if($cached_data_time == null || ($current_time > ($cached_data_time[0]->last_touch + 604800))){
+        if($cached_data_time == null || ($current_time > ($cached_data_time + 604800))){
 
-            // Get JSONs from supported_os GitHub
+            // Get YAML from supported_os GitHub repo
             ini_set("allow_url_fopen", 1);
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_URL, 'https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.json');
-            $json_result = curl_exec($ch);
+            $yaml_result = curl_exec($ch);
 
             // Check if we got results
-            if (strpos($json_result, '"current_os":') === false ){
-                print_r("Unable to fetch new JSONs from supported_os GitHub page!! Using local version instead.");
-                $json_result = file_get_contents(__DIR__ . '/supported_os_data.json');
+            if (strpos($yaml_result, '"current_os":') === false ){
+                print_r("Unable to fetch new YAML from supported_os GitHub page!! Using local version instead.");
+                $yaml_result = file_get_contents(__DIR__ . '/supported_os_data.json');
                 $cache_source = 2;
             } else {
                 $cache_source = 1;
             }
 
-            // Delete old cached data
-            $this->deleteWhere('serial_number=?', "JSON_CACHE_DATA");
-
-            $json_data = json_decode($json_result);
-            $current_os = $json_data->current_os;
+            $yaml_data = json_decode($yaml_result);
+            $current_os = $yaml_data->current_os;
             $digits = explode('.', $current_os);
             $mult = 10000;
             $current_os = 0;
@@ -78,22 +75,58 @@ class Supported_os_model extends \Model
                 $current_os += $digit * $mult;
                 $mult = $mult / 100;
             }
-
-            // Insert new cached data
-            $sql = "INSERT INTO `supported_os` (serial_number,current_os,highest_supported,machine_id,last_touch,shipping_os,model_support_cache) 
-                    VALUES ('JSON_CACHE_DATA','".$current_os."','".$cache_source."','Do not delete this row','".$current_time."',0,'".$json_result."')";
-            $queryobj->exec($sql);
+            
+            // Save new cache data to the cache table
+            munkireport\models\Cache::updateOrCreate(
+                [
+                    'module' => 'supported_os', 
+                    'property' => 'yaml',
+                ],[
+                    'value' => $yaml_result,
+                    'timestamp' => $current_time,
+                ]
+            );
+            munkireport\models\Cache::updateOrCreate(
+                [
+                    'module' => 'supported_os', 
+                    'property' => 'source',
+                ],[
+                    'value' => $cache_source,
+                    'timestamp' => $current_time,
+                ]
+            );
+            munkireport\models\Cache::updateOrCreate(
+                [
+                    'module' => 'supported_os', 
+                    'property' => 'current_os',
+                ],[
+                    'value' => $current_os,
+                    'timestamp' => $current_time,
+                ]
+            );
+            munkireport\models\Cache::updateOrCreate(
+                [
+                    'module' => 'supported_os', 
+                    'property' => 'last_update ',
+                ],[
+                    'value' => $current_time,
+                    'timestamp' => $current_time,
+                ]
+            );
+        } else {
+            
+            // Retrieve cached YAML from database
+            $yaml_result = munkireport\models\Cache::select('value')
+                            ->where('module', 'supported_os')
+                            ->where('property', 'yaml')
+                            ->value('value');
         }
-
-        // Get the cached JSONs from the database
-        $sql = "SELECT current_os, model_support_cache FROM `supported_os` WHERE serial_number = 'JSON_CACHE_DATA'";
-        $cached_jsons = $queryobj->query($sql)[0]->model_support_cache;
         
-        // Decode JSON
-        $json_data = json_decode($cached_jsons, true); 
-        $highest_os = $json_data['highest'];
-        $shipping_os = $json_data['shipping'];
-        $most_current_os = $json_data['current_os'];
+        // Decode YAML
+        $yaml_data = json_decode($yaml_result, true); 
+        $highest_os = $yaml_data['highest'];
+        $shipping_os = $yaml_data['shipping'];
+        $most_current_os = $yaml_data['current_os'];
 
         // Check if we are processing a plist or not
         if(!is_array($data)){
@@ -117,7 +150,7 @@ class Supported_os_model extends \Model
                 
                 // Compare model ID number to supported OS array, highest first
                 if ($model_num >= $model_check){
-                    // If supported OS is zero, set it to the current OS key from JSON
+                    // If supported OS is zero, set it to the current OS key from YAML
                     if($model_os == 0){
                         $model_os = $most_current_os;
                     }
@@ -148,8 +181,6 @@ class Supported_os_model extends \Model
             $this->rs['highest_supported'] = null;
         }
 
-        
-        
         // Process model ID for shipping_os
         if (array_key_exists($model_family, $shipping_os)) {
             // Sort the model ID numbers
@@ -186,10 +217,7 @@ class Supported_os_model extends \Model
         if(empty($this->rs['shipping_os'])){
             $this->rs['shipping_os'] = null;
         }
-        
-        
-        
-        
+
         // Convert current_os to int
         if (isset($this->rs['current_os']) && !is_array($data)) {
             $digits = explode('.', $this->rs['current_os']);

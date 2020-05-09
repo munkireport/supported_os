@@ -21,4 +21,3 @@ Table Schema
 * machine_id (string) Machine model ID
 * last_touch (int) When highest supported OS was last processed
 * shipping_os (int) The shipping version for the model
-* model_support_cache (text) Column is only use by one row to store the JSON cache file

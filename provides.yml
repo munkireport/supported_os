@@ -1,7 +1,7 @@
 admin_pages:
     admin:
         view: supported_os_admin
-        i18n: supported_os.highest_supported
+        i18n: supported_os.supported_os
 client_tabs:
     supported_os-tab:
         view: supported_os_tab

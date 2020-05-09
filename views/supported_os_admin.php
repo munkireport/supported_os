@@ -24,20 +24,20 @@ $(document).on('appReady', function(e, lang) {
         // Build table
         var sosrows = '<table class="table table-striped table-condensed" id="supported_os_status"><tbody>'
 
-        if (processdata[0]['last_touch'] > 0){
-            var date = new Date(processdata[0]['last_touch'] * 1000);
+        if (processdata['last_update'] > 0){
+            var date = new Date(processdata['last_update'] * 1000);
             sosrows = sosrows + '<tr><th>'+i18n.t('supported_os.last_cache_update')+'</th><td id="sos_time"><span title="'+moment(date).fromNow()+'">'+moment(date).format('llll')+'</span></td></tr>';
         } else {
             sosrows = sosrows + '<tr><th>'+i18n.t('supported_os.last_cache_update')+'</th><td id="sos_time">'+i18n.t('supported_os.never')+'</td></tr>';
         }
 
-        if (processdata[0]['highest_supported'] == 1){
-            sosrows = sosrows + '<tr><th>'+i18n.t('supported_os.cache_source')+'</th><td id="sos_source"><a href="https://github.com/munkireport/supported_os/blob/master/supported_os_data.json" target="_blank">'+i18n.t('supported_os.github')+'</a></td></tr>';
-        } else if (processdata[0]['highest_supported'] == 2){
+        if (processdata['source'] == 1){
+            sosrows = sosrows + '<tr><th>'+i18n.t('supported_os.cache_source')+'</th><td id="sos_source"><a href="https://github.com/munkireport/supported_os/blob/master/supported_os_data.yml" target="_blank">'+i18n.t('supported_os.github')+'</a></td></tr>';
+        } else if (processdata['source'] == 2){
             sosrows = sosrows + '<tr><th>'+i18n.t('supported_os.cache_source')+'</th><td id="sos_source">'+i18n.t('supported_os.local')+'</td></tr>';
         }
 
-        sosrows = sosrows + '<tr><th>'+i18n.t('supported_os.current_os')+'</th><td>'+(mr.integerToVersion(processdata[0]['current_os']))+'</td></tr>';
+        sosrows = sosrows + '<tr><th>'+i18n.t('supported_os.current_os')+'</th><td id="sos_current_os">'+(mr.integerToVersion(processdata['current_os']))+'</td></tr>';
 
         $('#SupportedOS-Status').html(sosrows+'</tbody></table>') // Close table framework and assign to HTML ID
     });
@@ -51,11 +51,12 @@ $(document).on('appReady', function(e, lang) {
         $('#GetAllSupportedOS').addClass('disabled');
         $('#UpdateSupportedOS').addClass('hide');
         
-        $.getJSON(appUrl + '/module/supported_os/update_cached_jsons', function (processdata) {
+        $.getJSON(appUrl + '/module/supported_os/update_cached_data', function (processdata) {
             if(processdata['status'] == 1){
                 var date = new Date(processdata['timestamp'] * 1000);
                 $('#sos_time').html('<span title="'+moment(date).fromNow()+'">'+moment(date).format('llll')+'</span>')
-                $('#sos_source').html('<a href="https://github.com/munkireport/supported_os/blob/master/supported_os_data.json" target="_blank">'+i18n.t('supported_os.update_from_github')+'</a>')
+                $('#sos_source').html('<a href="https://github.com/munkireport/supported_os/blob/master/supported_os_data.yml" target="_blank">'+i18n.t('supported_os.update_from_github')+'</a>')
+                $('#sos_current_os').html(mr.integerToVersion(processdata['current_os']))
                 $('#GetAllSupportedOS').removeClass('disabled');
                 
             } else if(processdata['status'] == 2){
@@ -63,6 +64,7 @@ $(document).on('appReady', function(e, lang) {
                 var date = new Date(processdata['timestamp'] * 1000);
                 $('#sos_time').html('<span title="'+moment(date).fromNow()+'">'+moment(date).format('llll')+'</span>')
                 $('#sos_source').html(i18n.t('supported_os.update_from_local'))
+                $('#sos_current_os').html(mr.integerToVersion(processdata['current_os']))
                 $('#GetAllSupportedOS').removeClass('disabled');
             }
         });

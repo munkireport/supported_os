@@ -43,8 +43,7 @@ class Supported_os_controller extends Module_controller
         $sql = "SELECT count(1) as count, highest_supported
 				FROM supported_os
 				LEFT JOIN reportdata USING (serial_number)
-                WHERE serial_number <> 'JSON_CACHE_DATA'
-                ".get_machine_group_filter('AND')."
+                ".get_machine_group_filter('')."
 				GROUP BY highest_supported
 				ORDER BY highest_supported DESC";
 
@@ -63,7 +62,7 @@ class Supported_os_controller extends Module_controller
      * @return void
      * @author tuxudo
      **/
-    public function update_cached_jsons()
+    public function update_cached_data()
     {
         // Authenticate
         $obj = new View();
@@ -74,17 +73,17 @@ class Supported_os_controller extends Module_controller
 
         $queryobj = new Supported_os_model();
 
-        // Get JSONs from supported_os GitHub
+        // Get YAML from supported_os GitHub
         ini_set("allow_url_fopen", 1);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, 'https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.json');
-        $json_result = curl_exec($ch);
+        $yaml_result = curl_exec($ch);
 
         // Check if we got results
-        if (strpos($json_result, '"current_os":') === false ){
-            $json_result = file_get_contents(__DIR__ . '/supported_os_data.json');
+        if (strpos($yaml_result, '"current_os":') === false ){
+            $yaml_result = file_get_contents(__DIR__ . '/supported_os_data.json');
             $return_status = 2;
             $cache_source = 2;
         } else {
@@ -92,12 +91,8 @@ class Supported_os_controller extends Module_controller
             $cache_source = 1;
         }
 
-        // Delete old cached data
-        $sql = "DELETE FROM `supported_os` WHERE serial_number = 'JSON_CACHE_DATA';";
-        $queryobj->exec($sql);
-
-        $json_data = json_decode($json_result);
-        $current_os = $json_data->current_os;
+        $yaml_data = json_decode($yaml_result);
+        $current_os = $yaml_data->current_os;
         $digits = explode('.', $current_os);
         $mult = 10000;
         $current_os = 0;
@@ -108,14 +103,47 @@ class Supported_os_controller extends Module_controller
 
         // Get the current time
         $current_time = time();
-
-        // Insert new cached data
-        $sql = "INSERT INTO `supported_os` (serial_number,current_os,highest_supported,machine_id,last_touch,shipping_os,model_support_cache) 
-                    VALUES ('JSON_CACHE_DATA','".$current_os."','".$cache_source."','Do not delete this row','".$current_time."',0,'".$json_result."')";
-        $queryobj->exec($sql);
-
+        
+        // Save new cache data to the cache table
+        munkireport\models\Cache::updateOrCreate(
+            [
+                'module' => 'supported_os', 
+                'property' => 'yaml',
+            ],[
+                'value' => $yaml_result,
+                'timestamp' => $current_time,
+            ]
+        );
+        munkireport\models\Cache::updateOrCreate(
+            [
+                'module' => 'supported_os', 
+                'property' => 'source',
+            ],[
+                'value' => $cache_source,
+                'timestamp' => $current_time,
+            ]
+        );
+        munkireport\models\Cache::updateOrCreate(
+            [
+                'module' => 'supported_os', 
+                'property' => 'current_os',
+            ],[
+                'value' => $current_os,
+                'timestamp' => $current_time,
+            ]
+        );
+        munkireport\models\Cache::updateOrCreate(
+            [
+                'module' => 'supported_os', 
+                'property' => 'last_update ',
+            ],[
+                'value' => $current_time,
+                'timestamp' => $current_time,
+            ]
+        );
+        
         // Send result
-        $out = array("status"=>$return_status,"source"=>$cache_source,"timestamp"=>$current_time);
+        $out = array("status"=>$return_status,"source"=>$cache_source,"timestamp"=>$current_time,"current_os"=>$current_os);
         $obj->view('json', array('msg' => $out));
     }
 
@@ -207,15 +235,21 @@ class Supported_os_controller extends Module_controller
             return;
         }
 
-        $out = array();
-        $machine = new Supported_os_model();
-        $sql = "SELECT current_os, highest_supported, last_touch
-				FROM supported_os
-                WHERE serial_number = 'JSON_CACHE_DATA'";
-
-        $out = $machine->query($sql);
+        $current_os = munkireport\models\Cache::select('value')
+                        ->where('module', 'supported_os')
+                        ->where('property', 'current_os')
+                        ->value('value');
+        $source = munkireport\models\Cache::select('value')
+                        ->where('module', 'supported_os')
+                        ->where('property', 'source')
+                        ->value('value');
+        $last_update = munkireport\models\Cache::select('value')
+                        ->where('module', 'supported_os')
+                        ->where('property', 'last_update')
+                        ->value('value');
 
         $obj = new View();
+        $out = array('current_os' => $current_os,'source' => $source,'last_update' => $last_update);
         $obj->view('json', array('msg' => $out));
     }
 
