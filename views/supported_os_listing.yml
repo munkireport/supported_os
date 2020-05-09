@@ -1,0 +1,15 @@
+i18n_title: supported_os.listingtitle
+not_null_column: current_os
+table:
+  - column: machine.computer_name
+    i18n_header: listing.computername
+    formatter: clientDetail
+    tab_link: supported_os-tab
+  - column: reportdata.serial_number
+    i18n_header: serial
+  - {i18n_header: username, column: reportdata.long_username}
+  - {i18n_header: supported_os.current_os, column: supported_os.current_os, formatter: osVersion}
+  - {i18n_header: supported_os.highest_supported, column: supported_os.highest_supported, formatter: osVersion}
+  - {i18n_header: supported_os.shipping_os, column: supported_os.shipping_os, formatter: osVersion}
+  - {i18n_header: supported_os.machine_id, column: supported_os.machine_id}
+  - {i18n_header: supported_os.last_touch, column: supported_os.last_touch, formatter: timestampToMoment}
