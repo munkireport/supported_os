@@ -32,12 +32,6 @@ class Supported_os_controller extends Module_controller
      **/
     public function os()
     {
-        $obj = new View();
-        if (! $this->authorized()) {
-            $obj->view('json', array('msg' => 'Not authorized'));
-            return;
-        }
-
         $out = array();
         $machine = new Supported_os_model();
         $sql = "SELECT count(1) as count, highest_supported
@@ -52,8 +46,7 @@ class Supported_os_controller extends Module_controller
             $out[] = array('label' => $obj->highest_supported, 'count' => intval($obj->count));
         }
 
-        $obj = new View();
-        $obj->view('json', array('msg' => $out));
+        jsonView($out);
     }
     
     /**
@@ -64,13 +57,6 @@ class Supported_os_controller extends Module_controller
      **/
     public function update_cached_data()
     {
-        // Authenticate
-        $obj = new View();
-        if (! $this->authorized()) {
-            $obj->view('json', array('msg' => 'Not authorized'));
-            return;
-        }
-
         $queryobj = new Supported_os_model();
 
         // Get YAML from supported_os GitHub
@@ -144,7 +130,7 @@ class Supported_os_controller extends Module_controller
         
         // Send result
         $out = array("status"=>$return_status,"source"=>$cache_source,"timestamp"=>$current_time,"current_os"=>$current_os);
-        $obj->view('json', array('msg' => $out));
+        jsonView($out);
     }
 
      /**
@@ -155,13 +141,6 @@ class Supported_os_controller extends Module_controller
      **/
     public function pull_all_supported_os_data($incoming_serial = '')
     {
-        $obj = new View();
-        // Authenticate
-        if (! $this->authorized()) {
-            $obj->view('json', array('msg' => array('error' => 'Not authenticated')));
-            return;
-        }
-        
         // Check if we are returning a list of all serials or processing a serial
         // Returns either a list of all serial numbers in MunkiReport OR
         // a JSON of what serial number was just ran with the status of the run
@@ -192,7 +171,7 @@ class Supported_os_controller extends Module_controller
             $machine = new Supported_os_model();
 
             // Send result
-            $obj->view('json', array('msg' => $machine->process($data)));
+            jsonView($machine->process($data));
         }
     }
     
@@ -203,12 +182,7 @@ class Supported_os_controller extends Module_controller
      * @author tuxudo
      **/
     public function recheck_highest_os($serial)
-    {
-        // Authenticate
-        if (! $this->authorized()) {
-            die('Authenticate first.'); // Todo: return json?
-        }
-        
+    {   
         $data = [];
         $data["serial_number"] = $serial;
         $data["reprocess"] = true;
@@ -229,12 +203,6 @@ class Supported_os_controller extends Module_controller
      **/
     public function get_admin_data()
     {
-        $obj = new View();
-        if (! $this->authorized()) {
-            $obj->view('json', array('msg' => 'Not authorized'));
-            return;
-        }
-
         $current_os = munkireport\models\Cache::select('value')
                         ->where('module', 'supported_os')
                         ->where('property', 'current_os')
@@ -248,9 +216,8 @@ class Supported_os_controller extends Module_controller
                         ->where('property', 'last_update')
                         ->value('value');
 
-        $obj = new View();
         $out = array('current_os' => $current_os,'source' => $source,'last_update' => $last_update);
-        $obj->view('json', array('msg' => $out));
+        jsonView($out);
     }
 
     /**
@@ -259,14 +226,7 @@ class Supported_os_controller extends Module_controller
      **/
     public function get_data($serial_number = '')
     {
-        $obj = new View();
-
-        if (! $this->authorized()) {
-            $obj->view('json', array('msg' => 'Not authorized'));
-            return;
-        }
-
-        $os = new Supported_os_model($serial_number);
-        $obj->view('json', array('msg' => $os->rs));
+        $os = new Supported_os_model($serial_number);        
+        jsonView($os->rs);
     }
 } // End class Supported_os_controller
