@@ -64,12 +64,12 @@ class Supported_os_controller extends Module_controller
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, 'https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.json');
+        curl_setopt($ch, CURLOPT_URL, 'https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.yml');
         $yaml_result = curl_exec($ch);
 
         // Check if we got results
         if (strpos($yaml_result, '"current_os":') === false ){
-            $yaml_result = file_get_contents(__DIR__ . '/supported_os_data.json');
+            $yaml_result = file_get_contents(__DIR__ . '/supported_os_data.yml');
             $return_status = 2;
             $cache_source = 2;
         } else {
@@ -77,7 +77,7 @@ class Supported_os_controller extends Module_controller
             $cache_source = 1;
         }
 
-        $yaml_data = json_decode($yaml_result);
+        $yaml_data = (object) Symfony\Component\Yaml\Yaml::parse($yaml_result);
         $current_os = $yaml_data->current_os;
         $digits = explode('.', $current_os);
         $mult = 10000;
@@ -160,7 +160,9 @@ class Supported_os_controller extends Module_controller
                 $out[] = $serialobj->serial_number;
             }
 
-            $obj->view('json', array('msg' => $out));
+            // Send result
+            jsonView($out);
+
         } else {
 
             $data = [];

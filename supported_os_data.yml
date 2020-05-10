@@ -1,3 +1,4 @@
+current_os: 10.15.5
 shipping:
   Xserve:
     '11': 10.4.8
@@ -86,7 +87,6 @@ shipping:
     '81': 10.10.2
     '91': 10.11.4
     '101': 10.12.5
-current_os: 10.15.5
 highest:
   Xserve:
     '11': 10.7.5
@@ -127,5 +127,4 @@ highest:
     '51': 10.11.6
     '61': 10.13.6
     '81': '0'
-ReadMe: JSON file used by MunkiReports supported_os module to determine current OS
-  and maximum supported OS versions
+ReadMe: YAML file used by MunkiReports supported_os module to determine current OS, maximum supported, and shipping OS versions

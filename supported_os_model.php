@@ -54,19 +54,20 @@ class Supported_os_model extends \Model
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_URL, 'https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.json');
+            curl_setopt($ch, CURLOPT_URL, 'https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.yml');
             $yaml_result = curl_exec($ch);
 
             // Check if we got results
             if (strpos($yaml_result, '"current_os":') === false ){
-                print_r("Unable to fetch new YAML from supported_os GitHub page!! Using local version instead.");
-                $yaml_result = file_get_contents(__DIR__ . '/supported_os_data.json');
+                error_log("Unable to fetch new YAML from supported_os GitHub page!! Using local version instead. ");
+                print_r("Unable to fetch new YAML from supported_os GitHub page!! Using local version instead. ");
+                $yaml_result = file_get_contents(__DIR__ . '/supported_os_data.yml');
                 $cache_source = 2;
             } else {
                 $cache_source = 1;
             }
 
-            $yaml_data = json_decode($yaml_result);
+            $yaml_data = (object) Symfony\Component\Yaml\Yaml::parse($yaml_result);
             $current_os = $yaml_data->current_os;
             $digits = explode('.', $current_os);
             $mult = 10000;
@@ -123,7 +124,8 @@ class Supported_os_model extends \Model
         }
         
         // Decode YAML
-        $yaml_data = json_decode($yaml_result, true); 
+        $yaml_data = (object) Symfony\Component\Yaml\Yaml::parse($yaml_result);
+        $yaml_data = json_decode(json_encode($yaml_data), TRUE);
         $highest_os = $yaml_data['highest'];
         $shipping_os = $yaml_data['shipping'];
         $most_current_os = $yaml_data['current_os'];
@@ -161,8 +163,8 @@ class Supported_os_model extends \Model
 
         } else {
             // Error out if we cannot locate that machine.
-            error_log("Machine model '".$this->rs['machine_id']."' not found in highest supported array.");
-            print_r("Machine model '".$this->rs['machine_id']."' not found in highest supported array.");
+            error_log("Machine model '".$this->rs['machine_id']."' not found in highest supported array. ");
+            print_r("Machine model '".$this->rs['machine_id']."' not found in highest supported array. ");
         }
 
         // Convert highest_supported to int
@@ -198,8 +200,8 @@ class Supported_os_model extends \Model
 
         } else {
             // Error out if we cannot locate that machine.
-            error_log("Machine model '".$this->rs['machine_id']."' not found in shipping os array.");
-            print_r("Machine model '".$this->rs['machine_id']."' not found in shipping os array.");
+            error_log("Machine model '".$this->rs['machine_id']."' not found in shipping os array. ");
+            print_r("Machine model '".$this->rs['machine_id']."' not found in shipping os array. ");
         }
 
         // Convert shipping_os to int
