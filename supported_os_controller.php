@@ -37,7 +37,7 @@ class Supported_os_controller extends Module_controller
         $sql = "SELECT count(1) as count, highest_supported
 				FROM supported_os
 				LEFT JOIN reportdata USING (serial_number)
-                ".get_machine_group_filter('')."
+				".get_machine_group_filter('')."
 				GROUP BY highest_supported
 				ORDER BY highest_supported DESC";
 

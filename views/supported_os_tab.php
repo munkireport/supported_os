@@ -45,20 +45,18 @@ $(document).on('appReady', function(e, lang) {
 
             // Add data
             $('#supported_os-cnt').text(mr.integerToVersion(data.highest_supported));
-
-			$('#supported_os-current_os').text(mr.integerToVersion(data.current_os));
-			$('#supported_os-shipping_os').text(mr.integerToVersion(data.shipping_os));
-			$('#supported_os-highest_supported').text(mr.integerToVersion(data.highest_supported));
-			$('#supported_os-machine_id').text(data.machine_id);
-			$('#supported_os-last_touch').text(data.last_touch);
+            $('#supported_os-current_os').text(mr.integerToVersion(data.current_os));
+            $('#supported_os-shipping_os').text(mr.integerToVersion(data.shipping_os));
+            $('#supported_os-highest_supported').text(mr.integerToVersion(data.highest_supported));
+            $('#supported_os-machine_id').text(data.machine_id);
 
             // Format and fill date
             var colvar = data.last_touch;
-            if(colvar !== "" && colvar.indexOf('-') === -1){
+            if(colvar > 0){
                 var date = new Date(colvar * 1000);
                 $('#supported_os-last_touch').html('<span title="'+moment(date).format('llll')+'">'+moment(date).fromNow()+'</span>');
-            } else if (colvar !== ""){
-                $('#supported_os-last_touch').html('<span title="' + colvar + '">' + moment(colvar).fromNow()+'</span>');   
+            } else {
+                $('#supported_os-last_touch').text(i18n.t('supported_os.never'));
             }
 		}
 	});
