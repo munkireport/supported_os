@@ -60,7 +60,7 @@ class Supported_os_model extends \Model
             // Check if we got results
             if (strpos($yaml_result, '"current_os":') === false ){
                 error_log("Unable to fetch new YAML from supported_os GitHub page!! Using local version instead. ");
-                print_r("Unable to fetch new YAML from supported_os GitHub page!! Using local version instead. ");
+//                print_r("Unable to fetch new YAML from supported_os GitHub page!! Using local version instead. ");
                 $yaml_result = file_get_contents(__DIR__ . '/supported_os_data.yml');
                 $cache_source = 2;
             } else {
