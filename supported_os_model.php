@@ -139,6 +139,7 @@ class Supported_os_model extends \Model
             $this->retrieve_record($data['serial_number']);
             $this->rs['machine_id'] = $data['machine_model'];
             $this->rs['current_os'] = $data['current_os'];
+            $this->rs['last_touch'] = $current_time;
         }
 
         $model_family = preg_replace("/[^A-Za-z]/", "", $this->rs['machine_id']);
