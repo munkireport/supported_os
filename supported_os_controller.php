@@ -172,7 +172,7 @@ class Supported_os_controller extends Module_controller
                         WHERE serial_number = '".$incoming_serial."'";
 
             $data = [];
-            $data["machine_model"] = $machine->query($sql)[0]->machine_model;
+            $data["machine_id"] = $machine->query($sql)[0]->machine_model;
             $data["current_os"] = $machine->query($sql)[0]->os_version;
             $data["serial_number"] = $incoming_serial;
             $data["reprocess"] = true;
@@ -201,7 +201,7 @@ class Supported_os_controller extends Module_controller
                         WHERE serial_number = '".$serial."'";
 
         $data = [];
-        $data["machine_model"] = $machine->query($sql)[0]->machine_model;
+        $data["machine_id"] = $machine->query($sql)[0]->machine_model;
         $data["current_os"] = $machine->query($sql)[0]->os_version;
         $data["serial_number"] = $serial;
         $data["reprocess"] = true;

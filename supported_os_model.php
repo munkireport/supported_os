@@ -135,9 +135,15 @@ class Supported_os_model extends \Model
             $parser = new CFPropertyList();
             $parser->parse($data);     
             $plist = $parser->toArray();
+
+            $this->rs['machine_id'] = $plist['machine_id'];
+            $this->rs['current_os'] = $plist['current_os'];
+            $this->rs['last_touch'] = $plist['last_touch'];
+            
         } else if($data['reprocess']){
             $this->retrieve_record($data['serial_number']);
-            $this->rs['machine_id'] = $data['machine_model'];
+            $this->rs['serial_number'] = $data['serial_number'];
+            $this->rs['machine_id'] = $data['machine_id'];
             $this->rs['current_os'] = $data['current_os'];
             $this->rs['last_touch'] = $current_time;
         }
@@ -234,16 +240,11 @@ class Supported_os_model extends \Model
                 $mult = $mult / 100;
             }
         }
-        
+
         // Set default current_os value
         if(empty($this->rs['current_os'])){
             $this->rs['current_os'] = null;
         }
-
-        $this->current_os = $this->rs['current_os'];
-        $this->machine_id = $this->rs['machine_id'];
-        $this->last_touch = $this->rs['last_touch'];
-        $this->highest_supported = $this->rs['highest_supported'];
 
         // Save OS gibblets
         $this->save();
