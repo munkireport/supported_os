@@ -193,14 +193,21 @@ class Supported_os_controller extends Module_controller
      **/
     public function recheck_highest_os($serial)
     {   
+        // Process the serial in the model
+        $machine = new Supported_os_model();
+
+        $sql = "SELECT machine.machine_model, machine.os_version
+                        FROM machine
+                        WHERE serial_number = '".$serial."'";
+
         $data = [];
+        $data["machine_model"] = $machine->query($sql)[0]->machine_model;
+        $data["current_os"] = $machine->query($sql)[0]->os_version;
         $data["serial_number"] = $serial;
         $data["reprocess"] = true;
 
-        // Process the serial in the model
-        $machine = new Supported_os_model();
         $machine->process($data);
-        
+
         // Send people back to the client tab once serial is reprocessed
         redirect("clients/detail/$serial#tab_supported_os-tab");
     }
