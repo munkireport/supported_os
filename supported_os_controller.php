@@ -165,7 +165,15 @@ class Supported_os_controller extends Module_controller
 
         } else {
 
+            // Get machine model
+            $machine = new Supported_os_model();
+            $sql = "SELECT machine.machine_model, machine.os_version
+                        FROM machine
+                        WHERE serial_number = '".$incoming_serial."'";
+
             $data = [];
+            $data["machine_model"] = $machine->query($sql)[0]->machine_model;
+            $data["current_os"] = $machine->query($sql)[0]->os_version;
             $data["serial_number"] = $incoming_serial;
             $data["reprocess"] = true;
 

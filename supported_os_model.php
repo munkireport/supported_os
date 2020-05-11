@@ -76,7 +76,7 @@ class Supported_os_model extends \Model
                 $current_os += $digit * $mult;
                 $mult = $mult / 100;
             }
-            
+
             // Save new cache data to the cache table
             munkireport\models\Cache::updateOrCreate(
                 [
@@ -115,14 +115,14 @@ class Supported_os_model extends \Model
                 ]
             );
         } else {
-            
+
             // Retrieve cached YAML from database
             $yaml_result = munkireport\models\Cache::select('value')
                             ->where('module', 'supported_os')
                             ->where('property', 'yaml')
                             ->value('value');
         }
-        
+
         // Decode YAML
         $yaml_data = (object) Symfony\Component\Yaml\Yaml::parse($yaml_result);
         $yaml_data = json_decode(json_encode($yaml_data), TRUE);
@@ -137,8 +137,10 @@ class Supported_os_model extends \Model
             $plist = $parser->toArray();
         } else if($data['reprocess']){
             $this->retrieve_record($data['serial_number']);
+            $this->rs['machine_id'] = $data['machine_model'];
+            $this->rs['current_os'] = $data['current_os'];
         }
-        
+
         $model_family = preg_replace("/[^A-Za-z]/", "", $this->rs['machine_id']);
         $model_num = preg_replace("/[^0-9]/", "", $this->rs['machine_id']);
 
@@ -146,12 +148,13 @@ class Supported_os_model extends \Model
         if (array_key_exists($model_family, $highest_os)) {
             // Sort the model ID numbers
             krsort($highest_os[$model_family]);
-            
+
             // Process each model ID number in the model ID family
             foreach($highest_os[$model_family] as $model_check=>$model_os){
-                
+
                 // Compare model ID number to supported OS array, highest first
                 if ($model_num >= $model_check){
+
                     // If supported OS is zero, set it to the current OS key from YAML
                     if($model_os == 0){
                         $model_os = $most_current_os;
@@ -164,7 +167,7 @@ class Supported_os_model extends \Model
         } else {
             // Error out if we cannot locate that machine.
             error_log("Machine model '".$this->rs['machine_id']."' not found in highest supported array. ");
-            print_r("Machine model '".$this->rs['machine_id']."' not found in highest supported array. ");
+//            print_r("Machine model '".$this->rs['machine_id']."' not found in highest supported array. ");
         }
 
         // Convert highest_supported to int
@@ -201,7 +204,7 @@ class Supported_os_model extends \Model
         } else {
             // Error out if we cannot locate that machine.
             error_log("Machine model '".$this->rs['machine_id']."' not found in shipping os array. ");
-            print_r("Machine model '".$this->rs['machine_id']."' not found in shipping os array. ");
+//            print_r("Machine model '".$this->rs['machine_id']."' not found in shipping os array. ");
         }
 
         // Convert shipping_os to int
