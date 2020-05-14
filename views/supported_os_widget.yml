@@ -1,0 +1,8 @@
+type: bargraph
+widget_id: supported-os-widget
+api_url: /module/supported_os/os
+i18n_title: supported_os.highest_supported
+icon: fa-level-up
+listing_link: /show/listing/supported_os/supported_os
+label_modifier: mr.integerToVersion(label)
+search_component: e.data.label

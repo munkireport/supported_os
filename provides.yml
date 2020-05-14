@@ -1,0 +1,16 @@
+admin_pages:
+    admin:
+        view: supported_os_admin
+        i18n: supported_os.supported_os
+client_tabs:
+    supported_os-tab:
+        view: supported_os_tab
+        i18n: supported_os.supported_os
+        badge: supported_os-cnt
+listings:
+    supported_os:
+        view: supported_os_listing
+        i18n: supported_os.supported_os
+widgets:
+    supported_os:
+        view: supported_os_widget

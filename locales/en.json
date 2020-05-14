@@ -1,7 +1,22 @@
 {
-    "current_os": "Current OS",
+    "title_admin": "Supported OS Admin",
     "highest_supported": "Highest Supported OS",
-    "listingtitle": "Highest Supported OS Report",
+    "listingtitle": "Supported OS Report",
     "machine_id": "Model ID",
-    "last_touch": "Last Checked"
+    "recheck": "Process Supported OS",
+    "last_touch": "Last Checked",
+    "last_cache_update": "Last OS Version Data Update",
+    "cache_source": "OS Version Data Source",
+    "update_cache_file": "Update OS Version Data",
+    "update_status": "Data Update Status",
+    "update_from_github": "Data Updated from GitHub",
+    "update_from_local": "Data Updated from Local File",
+    "current_os": "Current OS",
+    "supported_os": "Supported OS",
+    "shipping_os": "Shipping OS",
+    "never": "Never",
+    "local": "Local File",
+    "github": "GitHub",
+    "processing": "Processing",
+    "pull_in_all": "Process All Machines"
 }
