@@ -38,6 +38,7 @@ class Supported_os_controller extends Module_controller
 				FROM supported_os
 				LEFT JOIN reportdata USING (serial_number)
 				WHERE ".get_machine_group_filter('')."
+				AND highest_supported > 0
 				GROUP BY highest_supported
 				ORDER BY highest_supported DESC";
 
