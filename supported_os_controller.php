@@ -1,5 +1,7 @@
 <?php
 
+use munkireport\lib\Request;
+
 /**
  * Supported_os module class
  *
@@ -60,15 +62,12 @@ class Supported_os_controller extends Module_controller
         $queryobj = new Supported_os_model();
 
         // Get YAML from supported_os GitHub
-        ini_set("allow_url_fopen", 1);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, 'https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.yml');
-        $yaml_result = curl_exec($ch);
+        $web_request = new Request();
+        $options = ['http_errors' => false];
+        $yaml_result = (string) $web_request->get('https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.ymld', $options);
 
         // Check if we got results
-        if (strpos($yaml_result, '"current_os":') === false ){
+        if (strpos($yaml_result, 'current_os: ') === false ){
             $yaml_result = file_get_contents(__DIR__ . '/supported_os_data.yml');
             $return_status = 2;
             $cache_source = 2;
