@@ -1,6 +1,7 @@
 <?php
 
 use CFPropertyList\CFPropertyList;
+use munkireport\lib\Request;
 
 class Supported_os_model extends \Model
 {    
@@ -50,12 +51,9 @@ class Supported_os_model extends \Model
         if($cached_data_time == null || ($current_time > ($cached_data_time + 604800))){
 
             // Get YAML from supported_os GitHub repo
-            ini_set("allow_url_fopen", 1);
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_URL, 'https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.yml');
-            $yaml_result = curl_exec($ch);
+            $web_request = new Request();
+            $options = ['http_errors' => false];
+            $yaml_result = (string) $web_request->get('https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.ymld', $options);
 
             // Check if we got results
             if (strpos($yaml_result, '"current_os":') === false ){
@@ -174,7 +172,6 @@ class Supported_os_model extends \Model
         } else {
             // Error out if we cannot locate that machine.
             error_log("Machine model '".$this->rs['machine_id']."' not found in highest supported array. ");
-//            print_r("Machine model '".$this->rs['machine_id']."' not found in highest supported array. ");
         }
 
         // Convert highest_supported to int
@@ -211,7 +208,6 @@ class Supported_os_model extends \Model
         } else {
             // Error out if we cannot locate that machine.
             error_log("Machine model '".$this->rs['machine_id']."' not found in shipping os array. ");
-//            print_r("Machine model '".$this->rs['machine_id']."' not found in shipping os array. ");
         }
 
         // Convert shipping_os to int
