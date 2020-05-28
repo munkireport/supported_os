@@ -65,7 +65,7 @@ class Supported_os_controller extends Module_controller
         // Get YAML from supported_os GitHub
         $web_request = new Request();
         $options = ['http_errors' => false];
-        $yaml_result = (string) $web_request->get('https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.ymld', $options);
+        $yaml_result = (string) $web_request->get('https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.yml', $options);
 
         // Check if we got results
         if (strpos($yaml_result, 'current_os: ') === false ){
