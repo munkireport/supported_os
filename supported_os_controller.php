@@ -167,11 +167,15 @@ class Supported_os_controller extends Module_controller
 
         } else {
 
-            // Get machine model
-            $machine = new Supported_os_model();
+            // Remove non-serial number characters
+            $incoming_serial = preg_replace("/[^A-Za-z0-9_\-]]/", '', $incoming_serial);
+
             $sql = "SELECT machine.machine_model, machine.os_version
                         FROM machine
                         WHERE serial_number = '".$incoming_serial."'";
+
+            // Get machine model
+            $machine = new Supported_os_model();
 
             $data = [];
             $data["machine_id"] = $machine->query($sql)[0]->machine_model;
@@ -195,12 +199,15 @@ class Supported_os_controller extends Module_controller
      **/
     public function recheck_highest_os($serial)
     {   
-        // Process the serial in the model
-        $machine = new Supported_os_model();
+        // Remove non-serial number characters
+        $serial = preg_replace("/[^A-Za-z0-9_\-]]/", '', $serial);
 
         $sql = "SELECT machine.machine_model, machine.os_version
                         FROM machine
                         WHERE serial_number = '".$serial."'";
+
+        // Process the serial in the model
+        $machine = new Supported_os_model();
 
         $data = [];
         $data["machine_id"] = $machine->query($sql)[0]->machine_model;
