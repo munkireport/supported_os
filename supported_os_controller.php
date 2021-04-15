@@ -64,7 +64,9 @@ class Supported_os_controller extends Module_controller
 
         // Get YAML from supported_os GitHub
         $web_request = new Request();
-        $options = ['http_errors' => false];
+        $options = ['http_errors' => false,
+                    'verify' => dirname(__FILE__).'/cacert.pem'
+                   ];
         $yaml_result = (string) $web_request->get('https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.yml', $options);
 
         // Check if we got results

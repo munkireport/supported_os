@@ -51,8 +51,10 @@ class Supported_os_model extends \Model
         if($cached_data_time == null || ($current_time > ($cached_data_time + 604800))){
 
             // Get YAML from supported_os GitHub repo
-            $web_request = new Request();
-            $options = ['http_errors' => false];
+            $web_request = new Request();            
+            $options = ['http_errors' => false,
+                        'verify' => dirname(__FILE__).'/cacert.pem'
+                       ];
             $yaml_result = (string) $web_request->get('https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.ymld', $options);
 
             // Check if we got results
