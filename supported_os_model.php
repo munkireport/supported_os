@@ -46,22 +46,23 @@ class Supported_os_model extends \Model
 
         // Get the current time
         $current_time = time();
-
+        
         // Check if we have a null result or a week has passed
         if($cached_data_time == null || ($current_time > ($cached_data_time + 604800))){
 
             // Get YAML from supported_os GitHub repo
             $web_request = new Request();
             $options = ['http_errors' => false];
-            $yaml_result = (string) $web_request->get('https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.ymld', $options);
+            $yaml_result = (string) $web_request->get('https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.yml', $options);
 
             // Check if we got results
-            if (strpos($yaml_result, '"current_os":') === false ){
+            if (strpos($yaml_result, 'current_os: ') === false ){
                 error_log("Unable to fetch new YAML from supported_os GitHub page!! Using local version instead. ");
-//                print_r("Unable to fetch new YAML from supported_os GitHub page!! Using local version instead. ");
+                // print_r("Unable to fetch new YAML from supported_os GitHub page!! Using local version instead. ");
                 $yaml_result = file_get_contents(__DIR__ . '/supported_os_data.yml');
                 $cache_source = 2;
             } else {
+                // print_r("Updating cache file from GitHub page. ");
                 $cache_source = 1;
             }
 
