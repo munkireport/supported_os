@@ -1,5 +1,5 @@
 i18n_title: supported_os.listingtitle
-not_null_column: current_os
+not_null_column: supported_os.current_os
 table:
   - column: machine.computer_name
     i18n_header: listing.computername
