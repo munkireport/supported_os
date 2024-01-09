@@ -22,7 +22,7 @@ class Supportedos extends Migration
             $table->index('last_touch');
         });
     }
-    
+
     public function down()
     {
         $capsule = new Capsule();

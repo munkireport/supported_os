@@ -37,12 +37,12 @@ class Supported_os_controller extends Module_controller
         $out = array();
         $machine = new Supported_os_model();
         $sql = "SELECT count(1) as count, highest_supported
-				FROM supported_os
-				LEFT JOIN reportdata USING (serial_number)
-				WHERE ".get_machine_group_filter('')."
-				AND highest_supported > 0
-				GROUP BY highest_supported
-				ORDER BY highest_supported DESC";
+                FROM supported_os
+                LEFT JOIN reportdata USING (serial_number)
+                WHERE ".get_machine_group_filter('')."
+                AND highest_supported > 0
+                GROUP BY highest_supported
+                ORDER BY highest_supported DESC";
 
         foreach ($machine->query($sql) as $obj) {
             $obj->highest_supported = $obj->highest_supported ? $obj->highest_supported : '0';
@@ -51,7 +51,7 @@ class Supported_os_controller extends Module_controller
 
         jsonView($out);
     }
-    
+
     /**
      * Force data pull from supported_os GitHub
      *
@@ -188,7 +188,7 @@ class Supported_os_controller extends Module_controller
             jsonView($machine->process($data));
         }
     }
-    
+
     /**
      * Reprocess serial number
      *
@@ -196,7 +196,7 @@ class Supported_os_controller extends Module_controller
      * @author tuxudo
      **/
     public function recheck_highest_os($serial)
-    {   
+    {
         // Remove non-serial number characters
         $serial = preg_replace("/[^A-Za-z0-9_\-]]/", '', $serial);
 

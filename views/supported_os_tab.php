@@ -1,47 +1,47 @@
 <h2>Supported OS  <a data-i18n="supported_os.recheck" class="btn btn-default btn-xs" href="<?php echo url('module/supported_os/recheck_highest_os/' . $serial_number);?>"></a></h2>
 
 <div id="supported_os-msg" data-i18n="listing.loading" class="col-lg-12 text-center"></div>
-	<div id="supported_os-view" class="row hide">
-		<div class="col-md-3">
-			<table class="table table-striped">
-				<tr>
-					<th data-i18n="supported_os.current_os"></th>
-					<td id="supported_os-current_os"></td>
-				</tr>
-				<tr>
-					<th data-i18n="supported_os.highest_supported"></th>
-					<td id="supported_os-highest_supported"></td>
-				</tr>
-				<tr>
-					<th data-i18n="supported_os.shipping_os"></th>
-					<td id="supported_os-shipping_os"></td>
-				</tr>
-				<tr>
-					<th data-i18n="supported_os.machine_id"></th>
-					<td id="supported_os-machine_id"></td>
-				</tr>	
-				<tr>
-					<th data-i18n="supported_os.last_touch"></th>
-					<td id="supported_os-last_touch"></td>
-				</tr>
-			</table>
-		</div>
-	</div>
+    <div id="supported_os-view" class="row hide">
+        <div class="col-md-3">
+            <table class="table table-striped">
+                <tr>
+                    <th data-i18n="supported_os.current_os"></th>
+                    <td id="supported_os-current_os"></td>
+                </tr>
+                <tr>
+                    <th data-i18n="supported_os.highest_supported"></th>
+                    <td id="supported_os-highest_supported"></td>
+                </tr>
+                <tr>
+                    <th data-i18n="supported_os.shipping_os"></th>
+                    <td id="supported_os-shipping_os"></td>
+                </tr>
+                <tr>
+                    <th data-i18n="supported_os.machine_id"></th>
+                    <td id="supported_os-machine_id"></td>
+                </tr>
+                <tr>
+                    <th data-i18n="supported_os.last_touch"></th>
+                    <td id="supported_os-last_touch"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
 <script>
 $(document).on('appReady', function(e, lang) {
 
-	// Get supported_os data
-	$.getJSON( appUrl + '/module/supported_os/get_data/' + serialNumber, function( data ) {
+    // Get supported_os data
+    $.getJSON( appUrl + '/module/supported_os/get_data/' + serialNumber, function( data ) {
         // Check if we have valid data
-		if( ! data.current_os){
-			$('#supported_os-msg').text(i18n.t('no_data'));
+        if( ! data.current_os){
+            $('#supported_os-msg').text(i18n.t('no_data'));
             $('#supported_os-cnt').text("");
-		} else {
+        } else {
 
-			// Hide
-			$('#supported_os-msg').text('');
-			$('#supported_os-view').removeClass('hide');
+            // Hide
+            $('#supported_os-msg').text('');
+            $('#supported_os-view').removeClass('hide');
 
             // Add data
             $('#supported_os-cnt').text(mr.integerToVersion(data.highest_supported));
@@ -58,8 +58,8 @@ $(document).on('appReady', function(e, lang) {
             } else {
                 $('#supported_os-last_touch').text(i18n.t('supported_os.never'));
             }
-		}
-	});
+        }
+    });
 });
 
 </script>

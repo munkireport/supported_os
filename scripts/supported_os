@@ -1,37 +1,37 @@
 #!/bin/sh
-# Check the supported_os once a week
+# Check the supported_os once a week or if the cached OS version changes
 
 # Seconds between checks
 CHECK=604800
 
 # Get the cache directory
-DIR=$(dirname $0)
+DIR=$(/usr/bin/dirname $0)
 
 # Check if supported_os.plist exists
 if [ -e "$DIR/cache/supported_os.plist" ]; then
-
 	# Get current time
-	TIME=$(date +%s)
+	TIME=$(/bin/date +%s)
 
 	# Get file modified time
-	FILEMTIME=$(stat -f "%Sm" -t "%s" "$DIR/cache/supported_os.plist")
+	FILEMTIME=$(/usr/bin/stat -f "%Sm" -t "%s" "$DIR/cache/supported_os.plist")
 
 	# Calculate the difference in seconds
 	DIFF=$(( $TIME - $FILEMTIME ))
 
-	if [ $DIFF -gt $CHECK ]; then
+	# Get the cached OS version
+	CACHED_OS=$(/usr/bin/defaults read "$DIR/cache/supported_os.plist" current_os)
+
+	# If cache file was last touched over a week ago or contains an outdated OS version, update it
+	if [ $DIFF -gt $CHECK ] || [ $(/usr/bin/sw_vers -productVersion) != "${CACHED_OS}" ]; then
 		# Store date in file
-		defaults write "$DIR/cache/supported_os.plist" last_touch $(date +%s)
-		defaults write "$DIR/cache/supported_os.plist" current_os $(sw_vers -productVersion)
-		defaults write "$DIR/cache/supported_os.plist" machine_id $(/usr/sbin/system_profiler SPHardwareDataType | grep "Model Identifier" | awk '{print $NF}')
+		/usr/bin/defaults write "$DIR/cache/supported_os.plist" last_touch $(/bin/date +%s)
+		/usr/bin/defaults write "$DIR/cache/supported_os.plist" current_os $(/usr/bin/sw_vers -productVersion)
+		/usr/bin/defaults write "$DIR/cache/supported_os.plist" machine_id $(/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/grep "Model Identifier" | /usr/bin/awk '{print $NF}')
 	fi
 
-
 else
-
 	# Store date in file
-	defaults write "$DIR/cache/supported_os.plist" last_touch $(date +%s)
-	defaults write "$DIR/cache/supported_os.plist" current_os $(sw_vers -productVersion)
-	defaults write "$DIR/cache/supported_os.plist" machine_id $(/usr/sbin/system_profiler SPHardwareDataType | grep "Model Identifier" | awk '{print $NF}')
-
+	/usr/bin/defaults write "$DIR/cache/supported_os.plist" last_touch $(/bin/date +%s)
+	/usr/bin/defaults write "$DIR/cache/supported_os.plist" current_os $(/usr/bin/sw_vers -productVersion)
+	/usr/bin/defaults write "$DIR/cache/supported_os.plist" machine_id $(/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/grep "Model Identifier" | /usr/bin/awk '{print $NF}')
 fi

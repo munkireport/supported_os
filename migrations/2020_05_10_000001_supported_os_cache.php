@@ -16,7 +16,7 @@ class SupportedOsCache extends Migration
             $table->index('shipping_os');
         });
      }
-    
+
     public function down()
     {
         $capsule = new Capsule();

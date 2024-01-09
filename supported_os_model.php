@@ -4,7 +4,7 @@ use CFPropertyList\CFPropertyList;
 use munkireport\lib\Request;
 
 class Supported_os_model extends \Model
-{    
+{
     public function __construct($serial = '')
     {
         parent::__construct('id', 'supported_os'); // Primary key, tablename
@@ -245,7 +245,7 @@ class Supported_os_model extends \Model
 
         // Save OS gibblets
         $this->save();
-        
+
         // Return something if reprocessing
         if(is_array($data)){
             return true;

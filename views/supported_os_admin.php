@@ -15,7 +15,7 @@
 
 <script>
 var supported_os_pull_all_running = 0;
-    
+
 $(document).on('appReady', function(e, lang) {
 
     // Get JSON of admin data
@@ -41,7 +41,7 @@ $(document).on('appReady', function(e, lang) {
 
         $('#SupportedOS-Status').html(sosrows+'</tbody></table>') // Close table framework and assign to HTML ID
     });
-    
+
     // Generate pull all button and header    
     $('#supported_os_pull_all').html('<h3 class="col-lg-6" >&nbsp;&nbsp;'+i18n.t('supported_os.title_admin')+'&nbsp;&nbsp;<button id="GetAllSupportedOS" class="btn btn-default btn-xs">'+i18n.t("supported_os.pull_in_all")+'</button>&nbsp;&nbsp;<button id="UpdateSupportedOS" class="btn btn-default btn-xs">'+i18n.t("supported_os.update_cache_file")+'</button>&nbsp;<i id="GetAllSupportedOSProgess" class="hide fa fa-cog fa-spin" aria-hidden="true"></i></h3>');
     
@@ -51,7 +51,7 @@ $(document).on('appReady', function(e, lang) {
         $('#GetAllSupportedOS').addClass('disabled');
         $('#GetAllSupportedOSProgess').removeClass('hide');
         $('#UpdateSupportedOS').addClass('disabled');
-        
+
         $.getJSON(appUrl + '/module/supported_os/update_cached_data', function (processdata) {
             if(processdata['status'] == 1){
                 var date = new Date(processdata['timestamp'] * 1000);
@@ -61,9 +61,9 @@ $(document).on('appReady', function(e, lang) {
                 $('#GetAllSupportedOS').removeClass('disabled');
                 $('#UpdateSupportedOS').removeClass('disabled');
                 $('#GetAllSupportedOSProgess').addClass('hide');
-                
+
             } else if(processdata['status'] == 2){
-                
+
                 var date = new Date(processdata['timestamp'] * 1000);
                 $('#sos_time').html('<span title="'+moment(date).fromNow()+'">'+moment(date).format('llll')+'</span>')
                 $('#sos_source').html(i18n.t('supported_os.update_from_local'))
@@ -170,7 +170,7 @@ window.onbeforeunload = function() {
         return;
     }
 };
-    
+
 </script>
 
 <?php $this->view('partials/foot'); ?>
