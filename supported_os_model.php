@@ -21,6 +21,9 @@ class Supported_os_model extends \Model
         }
 
         $this->serial_number = $serial;
+
+        // Add local config
+        configAppendFile(__DIR__ . '/config.php');
     }
 
     // ------------------------------------------------------------------------
@@ -46,7 +49,7 @@ class Supported_os_model extends \Model
 
         // Get the current time
         $current_time = time();
-        
+
         // Check if we have a null result or a week has passed
         if($cached_data_time == null || ($current_time > ($cached_data_time + 604800))){
 
@@ -128,6 +131,13 @@ class Supported_os_model extends \Model
         $highest_os = $yaml_data['highest'];
         $shipping_os = $yaml_data['shipping'];
         $most_current_os = $yaml_data['current_os'];
+
+        // Store existing current_os value
+        if(empty($this->rs['current_os'])){
+            $stored_current_os = null;
+        } else {
+            $stored_current_os = $this->rs['current_os'];
+        }
 
         // Check if we are processing a plist or not
         if(!is_array($data)){
@@ -246,9 +256,30 @@ class Supported_os_model extends \Model
         // Save OS gibblets
         $this->save();
 
+        // Trigger updated macOS event if not nulls and 'supported_os_show_macos_updated' config is set to true
+       if(conf('supported_os_show_macos_updated') && ! is_null($stored_current_os) && ! is_null($this->rs['current_os'])){
+            // and previous version of macOS is different than new version of macOS
+            if ( $stored_current_os !== $this->rs['current_os']){
+                $this->_storeEvents($stored_current_os, $this->rs['current_os']);
+            }
+        }
+
         // Return something if reprocessing
         if(is_array($data)){
             return true;
         }
     } // End process()
+
+    // Process events
+    private function _storeEvents($old_version, $new_version)
+    {
+        $old_version_array = str_split($old_version, 2);
+        $old_version_string = $old_version_array[0].".".intval($old_version_array[1]).".".intval($old_version_array[2]);
+
+        $new_version_array = str_split($new_version, 2);
+        $new_version_string = $new_version_array[0].".".intval($new_version_array[1]).".".intval($new_version_array[2]);
+
+        $msg = $old_version_string . ' -> ' . $new_version_string;
+        store_event($this->rs['serial_number'], "macOS updated", 'success', $msg);
+    }
 }
