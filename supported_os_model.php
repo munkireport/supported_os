@@ -279,7 +279,7 @@ class Supported_os_model extends \Model
         $new_version_array = str_split($new_version, 2);
         $new_version_string = $new_version_array[0].".".intval($new_version_array[1]).".".intval($new_version_array[2]);
 
-        $msg = $old_version_string . ' -> ' . $new_version_string;
+        $msg = $old_version_string . ' → ' . $new_version_string;
         store_event($this->rs['serial_number'], "macOS updated", 'success', $msg);
     }
 }
