@@ -1,4 +1,4 @@
-current_os: 14.4
+current_os: 14.4.1
 shipping:
   Xserve:
     '11': 10.4.8
@@ -135,7 +135,7 @@ highest:
     '91': 10.15.7
     '111': 11.7.10
     '114': 12.7.4
-    '141': 13.6.5
+    '141': 13.6.6
     '151': '0'
   MacBookAir:
     '11': 10.7.5
@@ -153,7 +153,7 @@ highest:
     '131': 10.15.7
     '151': 11.7.10
     '161': 12.7.4
-    '181': 13.6.5
+    '181': 13.6.6
     '191': '0'
   iMacPro:
     '11': '0'
@@ -164,7 +164,7 @@ highest:
     '61': 10.13.6
     '81': 11.7.10
     '91': 12.7.4
-    '101': 13.6.5
+    '101': 13.6.6
   Mac:
     '131': '0'
 ReadMe: YAML file used by MunkiReports supported_os module to determine current OS, maximum supported, and shipping OS versions
