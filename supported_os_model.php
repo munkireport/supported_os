@@ -259,7 +259,7 @@ class Supported_os_model extends \Model
         // Trigger updated macOS event if not nulls and 'supported_os_show_macos_updated' config is set to true
        if(conf('supported_os_show_macos_updated') && ! is_null($stored_current_os) && ! is_null($this->rs['current_os'])){
             // and previous version of macOS is different than new version of macOS
-            if ( $stored_current_os !== $this->rs['current_os']){
+            if (intval($stored_current_os) !== intval($this->rs['current_os'])){
                 $this->_storeEvents($stored_current_os, $this->rs['current_os']);
             }
         }
