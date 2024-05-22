@@ -82,7 +82,7 @@ class Supported_os_model extends \Model
             // Save new cache data to the cache table
             munkireport\models\Cache::updateOrCreate(
                 [
-                    'module' => 'supported_os', 
+                    'module' => 'supported_os',
                     'property' => 'yaml',
                 ],[
                     'value' => $yaml_result,
@@ -91,7 +91,7 @@ class Supported_os_model extends \Model
             );
             munkireport\models\Cache::updateOrCreate(
                 [
-                    'module' => 'supported_os', 
+                    'module' => 'supported_os',
                     'property' => 'source',
                 ],[
                     'value' => $cache_source,
@@ -100,7 +100,7 @@ class Supported_os_model extends \Model
             );
             munkireport\models\Cache::updateOrCreate(
                 [
-                    'module' => 'supported_os', 
+                    'module' => 'supported_os',
                     'property' => 'current_os',
                 ],[
                     'value' => $current_os,
@@ -109,7 +109,7 @@ class Supported_os_model extends \Model
             );
             munkireport\models\Cache::updateOrCreate(
                 [
-                    'module' => 'supported_os', 
+                    'module' => 'supported_os',
                     'property' => 'last_update ',
                 ],[
                     'value' => $current_time,
@@ -148,7 +148,7 @@ class Supported_os_model extends \Model
             $this->rs['machine_id'] = $plist['machine_id'];
             $this->rs['current_os'] = $plist['current_os'];
             $this->rs['last_touch'] = $plist['last_touch'];
-            
+
         } else if($data['reprocess']){
             $this->retrieve_record($data['serial_number']);
             $this->rs['serial_number'] = $data['serial_number'];
@@ -205,10 +205,10 @@ class Supported_os_model extends \Model
         if (array_key_exists($model_family, $shipping_os)) {
             // Sort the model ID numbers
             krsort($shipping_os[$model_family]);
-            
+
             // Process each model ID number in the model ID family
             foreach($shipping_os[$model_family] as $model_check=>$model_os){
-                
+
                 // Compare model ID number to shipping OS array, highest first
                 if ($model_num >= $model_check){
                     $this->rs['shipping_os'] = $model_os;
@@ -259,7 +259,7 @@ class Supported_os_model extends \Model
         // Trigger updated macOS event if not nulls and 'supported_os_show_macos_updated' config is set to true
        if(conf('supported_os_show_macos_updated') && ! is_null($stored_current_os) && ! is_null($this->rs['current_os'])){
             // and previous version of macOS is different than new version of macOS
-            if ( $stored_current_os !== $this->rs['current_os']){
+            if (intval($stored_current_os) !== intval($this->rs['current_os'])){
                 $this->_storeEvents($stored_current_os, $this->rs['current_os']);
             }
         }

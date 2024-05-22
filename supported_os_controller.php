@@ -20,7 +20,7 @@ class Supported_os_controller extends Module_controller
     {
         echo "You've loaded the supported_os module!";
     }
-    
+
     public function admin()
     {
         $obj = new View();
@@ -89,11 +89,11 @@ class Supported_os_controller extends Module_controller
 
         // Get the current time
         $current_time = time();
-        
+
         // Save new cache data to the cache table
         munkireport\models\Cache::updateOrCreate(
             [
-                'module' => 'supported_os', 
+                'module' => 'supported_os',
                 'property' => 'yaml',
             ],[
                 'value' => $yaml_result,
@@ -102,7 +102,7 @@ class Supported_os_controller extends Module_controller
         );
         munkireport\models\Cache::updateOrCreate(
             [
-                'module' => 'supported_os', 
+                'module' => 'supported_os',
                 'property' => 'source',
             ],[
                 'value' => $cache_source,
@@ -111,7 +111,7 @@ class Supported_os_controller extends Module_controller
         );
         munkireport\models\Cache::updateOrCreate(
             [
-                'module' => 'supported_os', 
+                'module' => 'supported_os',
                 'property' => 'current_os',
             ],[
                 'value' => $current_os,
@@ -120,7 +120,7 @@ class Supported_os_controller extends Module_controller
         );
         munkireport\models\Cache::updateOrCreate(
             [
-                'module' => 'supported_os', 
+                'module' => 'supported_os',
                 'property' => 'last_update ',
             ],[
                 'value' => $current_time,
@@ -250,7 +250,7 @@ class Supported_os_controller extends Module_controller
      **/
     public function get_data($serial_number = '')
     {
-        $os = new Supported_os_model($serial_number);        
+        $os = new Supported_os_model($serial_number);
         jsonView($os->rs);
     }
 } // End class Supported_os_controller
