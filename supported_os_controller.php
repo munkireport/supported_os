@@ -20,9 +20,18 @@ class Supported_os_controller extends Module_controller
     {
         echo "You've loaded the supported_os module!";
     }
-
+    
     public function admin()
     {
+        // Check if the user is authorized and has admin role
+        if (! $this->authorized()) {
+            die('Authenticate first.');
+        }
+
+        if (! $this->authorized('global')) {
+            die('You need to be admin');
+        }
+
         $obj = new View();
         $obj->view('supported_os_admin', [], $this->module_path.'/views/');
     }
@@ -60,12 +69,24 @@ class Supported_os_controller extends Module_controller
      **/
     public function update_cached_data()
     {
+        // Check if the user is authorized and has admin role
+        if (! $this->authorized()) {
+            jsonView(['error' => 'Authenticate first.']);
+            return;
+        }
+
+        if (! $this->authorized('global')) {
+            jsonView(['error' => 'You need to be admin']);
+            return;
+        }
+
         $queryobj = new Supported_os_model();
 
         // Get YAML from supported_os GitHub
         $web_request = new Request();
         $options = ['http_errors' => false];
         $yaml_result = (string) $web_request->get('https://raw.githubusercontent.com/munkireport/supported_os/master/supported_os_data.yml', $options);
+        // $yaml_result = (string) $web_request->get('https://raw.githubusercontent.com/ofirgalcon/supported_os/refs/heads/patch-19/supported_os_data.yml', $options);
 
         // Check if we got results
         if (strpos($yaml_result, 'current_os: ') === false ){
@@ -89,11 +110,11 @@ class Supported_os_controller extends Module_controller
 
         // Get the current time
         $current_time = time();
-
+        
         // Save new cache data to the cache table
         munkireport\models\Cache::updateOrCreate(
             [
-                'module' => 'supported_os',
+                'module' => 'supported_os', 
                 'property' => 'yaml',
             ],[
                 'value' => $yaml_result,
@@ -102,7 +123,7 @@ class Supported_os_controller extends Module_controller
         );
         munkireport\models\Cache::updateOrCreate(
             [
-                'module' => 'supported_os',
+                'module' => 'supported_os', 
                 'property' => 'source',
             ],[
                 'value' => $cache_source,
@@ -111,7 +132,7 @@ class Supported_os_controller extends Module_controller
         );
         munkireport\models\Cache::updateOrCreate(
             [
-                'module' => 'supported_os',
+                'module' => 'supported_os', 
                 'property' => 'current_os',
             ],[
                 'value' => $current_os,
@@ -120,7 +141,7 @@ class Supported_os_controller extends Module_controller
         );
         munkireport\models\Cache::updateOrCreate(
             [
-                'module' => 'supported_os',
+                'module' => 'supported_os', 
                 'property' => 'last_update ',
             ],[
                 'value' => $current_time,
@@ -141,6 +162,17 @@ class Supported_os_controller extends Module_controller
      **/
     public function pull_all_supported_os_data($incoming_serial = '')
     {
+        // Check if the user is authorized and has admin role
+        if (! $this->authorized()) {
+            jsonView(['error' => 'Authenticate first.']);
+            return;
+        }
+
+        if (! $this->authorized('global')) {
+            jsonView(['error' => 'You need to be admin']);
+            return;
+        }
+
         // Check if we are returning a list of all serials or processing a serial
         // Returns either a list of all serial numbers in MunkiReport OR
         // a JSON of what serial number was just ran with the status of the run
@@ -227,6 +259,17 @@ class Supported_os_controller extends Module_controller
      **/
     public function get_admin_data()
     {
+        // Check if the user is authorized and has admin role
+        if (! $this->authorized()) {
+            jsonView(['error' => 'Authenticate first.']);
+            return;
+        }
+
+        if (! $this->authorized('global')) {
+            jsonView(['error' => 'You need to be admin']);
+            return;
+        }
+
         $current_os = munkireport\models\Cache::select('value')
                         ->where('module', 'supported_os')
                         ->where('property', 'current_os')
@@ -250,7 +293,7 @@ class Supported_os_controller extends Module_controller
      **/
     public function get_data($serial_number = '')
     {
-        $os = new Supported_os_model($serial_number);
+        $os = new Supported_os_model($serial_number);        
         jsonView($os->rs);
     }
 } // End class Supported_os_controller
