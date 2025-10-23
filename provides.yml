@@ -14,3 +14,9 @@ listings:
 widgets:
     supported_os:
         view: supported_os_widget
+    supported_os_vertical:
+        view: supported_os_vertical_widget      
+reports:
+    supported_os:
+        view: supported_os_report
+        i18n: supported_os.supported_os
