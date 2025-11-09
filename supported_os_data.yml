@@ -1,4 +1,4 @@
-current_os: 26
+current_os: 26.1
 shipping:
   Xserve:
     '11': 10.4.8
