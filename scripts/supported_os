@@ -26,12 +26,12 @@ if [ -e "$DIR/cache/supported_os.plist" ]; then
 		# Store date in file
 		/usr/bin/defaults write "$DIR/cache/supported_os.plist" last_touch $(/bin/date +%s)
 		/usr/bin/defaults write "$DIR/cache/supported_os.plist" current_os $(/usr/bin/sw_vers -productVersion)
-		/usr/bin/defaults write "$DIR/cache/supported_os.plist" machine_id $(/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/grep "Model Identifier" | /usr/bin/awk '{print $NF}')
+		/usr/bin/defaults write "$DIR/cache/supported_os.plist" machine_id $(/usr/sbin/sysctl -n hw.model)
 	fi
 
 else
 	# Store date in file
 	/usr/bin/defaults write "$DIR/cache/supported_os.plist" last_touch $(/bin/date +%s)
 	/usr/bin/defaults write "$DIR/cache/supported_os.plist" current_os $(/usr/bin/sw_vers -productVersion)
-	/usr/bin/defaults write "$DIR/cache/supported_os.plist" machine_id $(/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/grep "Model Identifier" | /usr/bin/awk '{print $NF}')
+	/usr/bin/defaults write "$DIR/cache/supported_os.plist" machine_id $(/usr/sbin/sysctl -n hw.model)
 fi
