@@ -146,7 +146,7 @@ class Supported_os_controller extends Module_controller
         // a JSON of what serial number was just ran with the status of the run
 
         // Remove non-serial number characters
-        $incoming_serial = preg_replace("/[^A-Za-z0-9_\-]]/", '', $incoming_serial);
+        $incoming_serial = preg_replace("/[^A-Za-z0-9_\-]/", '', $incoming_serial);
 
         if ( $incoming_serial == ''){
             // Get all the serial numbers in an object
@@ -198,7 +198,7 @@ class Supported_os_controller extends Module_controller
     public function recheck_highest_os($serial)
     {
         // Remove non-serial number characters
-        $serial = preg_replace("/[^A-Za-z0-9_\-]]/", '', $serial);
+        $serial = preg_replace("/[^A-Za-z0-9_\-]/", '', $serial);
 
         // Process the serial in the model
         $machine = new Supported_os_model();
